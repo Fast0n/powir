@@ -1,0 +1,50 @@
+# Compila l'eseguibile portable per Windows e lo allega alla release
+# Si avvia con il push di un tag "v*" (es. v1.1.0) oppure manualmente da Actions
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # react-scripts 3.x ed electron-builder 22.x richiedono Node 16
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 16
+          cache: npm
+
+      - name: Installa dipendenze
+        run: npm ci
+
+      - name: Build React
+        run: npm run react-build
+        env:
+          CI: false
+
+      - name: Build eseguibile portable
+        run: npx electron-builder --win portable --publish never
+
+      - name: Carica artefatto
+        uses: actions/upload-artifact@v4
+        with:
+          name: powir-windows
+          path: dist/*.exe
+
+      - name: Pubblica release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
+          generate_release_notes: true

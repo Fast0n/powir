@@ -3,6 +3,7 @@ const path = require('path')
 const isDev  = require('electron-is-dev')
 const server = require('./app/server')
 const { getMenuTemplate } = require('./app/menu')
+const i18n = require('./app/i18n')
 
 
 function createWindow () {
@@ -27,15 +28,25 @@ function createWindow () {
   isDev ? win.webContents.openDevTools() : null
 }
 
-const menuTemplate = getMenuTemplate(server)
-const menu = Menu.buildFromTemplate(menuTemplate)
-Menu.setApplicationMenu(menu)
+// Ricostruisce il menu applicazione nella lingua corrente
+function applyMenu() {
+  const menuTemplate = getMenuTemplate(server)
+  const menu = Menu.buildFromTemplate(menuTemplate)
+  Menu.setApplicationMenu(menu)
+}
+
+applyMenu()
 
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  // Lingua iniziale dal sistema; l'interfaccia la aggiorna con 'set-language'
+  i18n.setLanguage(app.getLocale())
+  applyMenu()
+  createWindow()
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -78,4 +89,11 @@ ipcMain.on('get-updates', (event, data) => {
 
 ipcMain.on('open-link', async (event, data) => {
   server.openLink(data.url).catch(error => server.log(error))
+})
+
+ipcMain.on('set-language', (event, data) => {
+  const previous = i18n.getLanguage()
+  if (i18n.setLanguage(data && data.language) !== previous) {
+    applyMenu()
+  }
 })

@@ -1,16 +1,18 @@
+const { t } = require('./i18n')
+
 function getMenuTemplate(server) {
     return [
         // { role: 'fileMenu' }
         {
-            label: 'File',
+            label: t('file'),
             submenu: [
                 {
-                    label: 'Main Website',
+                    label: t('mainWebsite'),
                     click: async () => {
                         await server.openLink('https://powir.slapbot.me')
                     }
                 },{
-                    label: 'Author',
+                    label: t('author'),
                     click: async () => {
                         server.showAuthorPage()
                     }
@@ -21,23 +23,23 @@ function getMenuTemplate(server) {
         },
         // { role: 'editMenu' }
         {
-            label: 'Actions',
+            label: t('actions'),
             submenu: [
                 {
-                    label: 'Export JSON',
+                    label: t('exportJSON'),
                     click: async () => {
                         server.exportJSONData()
                     }
                 },
                 {
-                    label: 'Export PDF',
+                    label: t('exportPDF'),
                     click: async () => {
                         server.exportPDFReport()
                     }
                 },
                 { type: 'separator' },
                 {
-                    label: 'Display Original Report',
+                    label: t('displayOriginal'),
                     click: async () => {
                         server.showOriginalReport()
                     }
@@ -45,7 +47,7 @@ function getMenuTemplate(server) {
             ]
         },
         {
-            label: 'View',
+            label: t('view'),
             submenu: [
                 { role: 'resetzoom' },
                 { role: 'zoomin' },
@@ -55,7 +57,7 @@ function getMenuTemplate(server) {
             ]
         },
         {
-            label: 'Tools',
+            label: t('tools'),
             submenu: [
                 { role: 'reload' },
                 { role: 'forcereload' },
@@ -64,19 +66,20 @@ function getMenuTemplate(server) {
         },
         {
             role: 'help',
+            label: t('help'),
             submenu: [
                 {
-                    label: 'Issues/Bugs',
+                    label: t('issues'),
                     click: async () => {
                         await server.openLink('https://github.com/slapbot/powir/issues')
                     }
                 },{
-                    label: 'Chat/Updates',
+                    label: t('chat'),
                     click: async () => {
                         await server.openLink('https://twitter.com/ugupta41')
                     }
                 },{
-                    label: 'Feedback/Enquiry',
+                    label: t('feedback'),
                     click: async () => {
                         await server.openLink('https://slapbot.me')
                     }

@@ -1,7 +1,7 @@
 {
   "name": "powir",
-  "version": "1.0.4",
-  "description": "Windows 10 based tool to monitor and analyze your system's power and battery usage",
+  "version": "1.1.0",
+  "description": "Windows 10 based tool to monitor and analyze your system's power and battery usage (multilingual, Windows 11 theme)",
   "main": "public/electron.js",
   "repository": {
     "type": "git",

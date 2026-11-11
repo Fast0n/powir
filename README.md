@@ -22,6 +22,27 @@
 
 <hr>
 
+> **Fork multilingua di Powir** — interfaccia in 🇮🇹 Italiano, 🇬🇧 English, 🇪🇸 Español, 🇫🇷 Français, 🇵🇹 Português, 🇵🇱 Polski
+> e selettore tema: **Originale** (PaperCSS) oppure **Windows 11** chiaro/scuro.
+> Scarica l'eseguibile dalla pagina [Releases](../../releases/latest). Novità in [CHANGELOG.md](CHANGELOG.md).
+
+### Lingua e tema / Language & theme
+
+- La lingua viene rilevata dal sistema; si cambia dal selettore **Lingua** nella barra superiore (anche il menu dell'app si aggiorna).
+- Il selettore **Tema** offre: *Originale*, *Windows 11 · Chiaro*, *Windows 11 · Scuro*. Le scelte vengono ricordate.
+- Per aggiungere una lingua: crea `src/i18n/locales/<codice>.js` (copiando `en.js`), registrala in `src/settings/SettingsContext.js` e aggiungi le voci di menu in `public/app/i18n.js`.
+
+### Release
+
+Il workflow `.github/workflows/release.yml` compila l'eseguibile portable su Windows e lo allega alla release quando pubblichi un tag:
+
+```bash
+git tag v1.1.0
+git push origin v1.1.0
+```
+
+<hr>
+
 ![](demos/gifs/powir-main.gif)
 
 <!-- TABLE OF CONTENTS -->

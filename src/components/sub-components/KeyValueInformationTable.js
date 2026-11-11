@@ -1,13 +1,16 @@
 import React from "react";
+import Icon from "./Icon";
+import { useSettings } from "../../settings/SettingsContext";
 
 function KeyValueInformationTable(props) {
+    const { t } = useSettings()
     function renderInfo(element, index, type) {
         const extraHelp = [
             {
-                'popoverHelp': "Amount of charge battery was designed to hold.",
+                'popoverHelp': t('table.designCapacityHelp'),
                 'spanClass': 'badge bg-blue text-lg'
             },{
-                'popoverHelp': "Amount of charge battery can currently hold.",
+                'popoverHelp': t('table.fullChargeHelp'),
                 'spanClass': 'badge bg-red text-lg'
             },
         ]
@@ -26,7 +29,7 @@ function KeyValueInformationTable(props) {
                                 <div className='m-0-important'
                                      popover-right={index === 4 ? extraHelp[0].popoverHelp : extraHelp[1].popoverHelp}
                                 >
-                                    <img className="no-border"
+                                    <Icon className="no-border"
                                          src="assets/images/ios-help.png"
                                          alt="help"
                                     />
@@ -49,17 +52,17 @@ function KeyValueInformationTable(props) {
     }
 
     return (
-        <div>
+        <div className="pw-card pw-table-card">
             <div className='flex'>
-                <img className='no-border mr-1' src={props.iconUrl} alt={props.iconAlt}/>
+                <Icon className='no-border mr-1' src={props.iconUrl} alt={props.iconAlt}/>
                 <h3>{props.heading}</h3>
             </div>
-            <span className="text-xs">{props.info.note}</span>
+            <span className="text-xs">{t('notes.' + props.info.name, props.info.note)}</span>
             <table>
                 <thead>
                 <tr>
-                    <th>Key</th>
-                    <th>Value</th>
+                    <th>{t('table.key')}</th>
+                    <th>{t('table.value')}</th>
                 </tr>
                 </thead>
                 <tbody>

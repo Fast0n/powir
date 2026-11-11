@@ -29,8 +29,23 @@
 <!--    <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.css">-->
 <!--    <link href="https://fonts.googleapis.com/css?family=Neucha|Patrick+Hand+SC" rel="stylesheet">-->
     <link rel="stylesheet" href="assets/css/tailwind.min.css">
-    <link rel="stylesheet" href="assets/css/paper.min.css">
+    <link id="paper-css" rel="stylesheet" href="assets/css/paper.min.css">
+    <link rel="stylesheet" href="assets/css/modern.css">
     <link rel="stylesheet" href="assets/css/fonts.css">
+    <script>
+      // Applica subito il tema salvato per evitare lo sfarfallio all'avvio
+      (function () {
+        var theme = 'original';
+        try { theme = localStorage.getItem('powir.theme') || 'original'; } catch (e) {}
+        var root = document.documentElement;
+        if (theme === 'modern-light' || theme === 'modern-dark') {
+          root.className = 'theme-modern' + (theme === 'modern-dark' ? ' theme-dark' : '');
+          document.getElementById('paper-css').disabled = true;
+        } else {
+          root.className = 'theme-original';
+        }
+      })();
+    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

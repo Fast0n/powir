@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
+import Icon from "./sub-components/Icon";
 import KeyValueInformationTable from "./sub-components/KeyValueInformationTable";
 import Chart from "./sub-components/Chart";
 import CurrentBatteryEstimate from "./sub-components/CurrentBatteryEstimate";
 import RecentBatteryEstimate from "./sub-components/RecentBatteryEstimate";
 import { getReport } from './utils/fetcher'
+import { useSettings } from "../settings/SettingsContext";
 
 function InformationWindow() {
+    const { t } = useSettings()
     function shouldRenderComponent(component) {
-        return dataFetchStatus ? component : "Loading..."
+        return dataFetchStatus ? component : <span className="pw-loading">{t('app.loading')}</span>
     }
 
     const [dataFetchStatus, setDataFetchStatus] = useState(false)
@@ -36,43 +39,43 @@ function InformationWindow() {
 
     return (
         <div>
-            <div className="flex flex-wrap border-bottom mt-3 pb-3">
-                <div className="w-full lg:w-1/2">
+            <div className="flex flex-wrap border-bottom mt-3 pb-3 pw-section">
+                <div className="w-full lg:w-1/2 pw-col">
                     { shouldRenderComponent(
                         <KeyValueInformationTable
                             info={batteryInfo}
-                            heading={"Battery Information"}
+                            heading={t('info.batteryInfo')}
                             iconUrl={"assets/images/high-battery.png"}
                             iconAlt={"high-battery"}
                         />
                     )}
                 </div>
-                <div className="w-full lg:w-1/2">
-                    <div className="border border-primary">
+                <div className="w-full lg:w-1/2 pw-col">
+                    <div className="border border-primary pw-card">
                         { shouldRenderComponent(
                             <Chart
                                 info={batteryCapacityHistory}
-                                heading={"Battery Capacity History"}
+                                heading={t('info.batteryCapacityHistory')}
                                 metaData={{
-                                    xLabel: "Date",
-                                    yLabel: "Battery Capacity ( Mwh )"
+                                    xLabel: t('info.date'),
+                                    yLabel: t('info.capacityAxis')
                                 }}
                             />
                         ) }
                     </div>
                 </div>
             </div>
-            <div className="flex flex-wrap border-bottom mt-3 pb-3">
-                <div className="w-full lg:w-1/2">
+            <div className="flex flex-wrap border-bottom mt-3 pb-3 pw-section">
+                <div className="w-full lg:w-1/2 pw-col">
                     { shouldRenderComponent(
                         <KeyValueInformationTable
                             info={systemInfo}
-                            heading={"System Information"}
+                            heading={t('info.systemInfo')}
                             iconUrl={"assets/images/windows8.png"}
                         />
                     )}
                 </div>
-                <div className="w-full lg:w-1/2">
+                <div className="w-full lg:w-1/2 pw-col">
                     <div className="flex flex-wrap">
                         <div className="w-full mb-3">
                             { shouldRenderComponent(
@@ -80,14 +83,14 @@ function InformationWindow() {
                             )}
                         </div>
                         <div className="w-full">
-                            <div className="border border-primary">
+                            <div className="border border-primary pw-card">
                                 { shouldRenderComponent(
                                     <Chart
                                         info={batteryLifeHistory}
-                                        heading={"Battery Life Estimates"}
+                                        heading={t('info.batteryLifeEstimates')}
                                         metaData={{
-                                            xLabel: "Date",
-                                            yLabel: "Battery Life ( minutes )"
+                                            xLabel: t('info.date'),
+                                            yLabel: t('info.lifeAxis')
                                         }}
                                     />
                                 )}
@@ -96,15 +99,16 @@ function InformationWindow() {
                     </div>
                 </div>
             </div>
-            <div className="flex flex-wrap mt-3 pb-3">
+            <div className="flex flex-wrap mt-3 pb-3 pw-section">
                 <div className="w-full flex flex-wrap pb-2">
-                    <div className="w-full lg:w-1/2">
+                    <div className="w-full lg:w-1/2 pw-col">
+                      <div className="pw-card pw-recent">
                         <div className="w-full">
                             <div className="flex">
-                                <img className='no-border mr-1' src="assets/images/lightning-arrow.png" alt={'lightning-arrow'}/>
-                                <h3>Recent Power & Battery Usage</h3>
+                                <Icon className='no-border mr-1' src="assets/images/lightning-arrow.png" alt={'lightning-arrow'}/>
+                                <h3>{t('info.recentUsageTitle')}</h3>
                             </div>
-                            <span className='text-xs'>Observed power and battery states of the system in the recent time period.</span>
+                            <span className='text-xs'>{t('info.recentUsageNote')}</span>
                         </div>
                         <div className="flex flex-wrap">
                             <div className="w-full mt-4 mr-2">
@@ -113,8 +117,8 @@ function InformationWindow() {
                                         info={powerUsageInfo}
                                         heading={""}
                                         metaData={{
-                                            xLabel: "Date",
-                                            yLabel: "Usage ( hours )",
+                                            xLabel: t('info.date'),
+                                            yLabel: t('info.usageAxis'),
                                             type:'dailyBar'
                                         }}
                                     />
@@ -147,8 +151,9 @@ function InformationWindow() {
                                 </div>
                             </div>
                         </div>
+                      </div>
                     </div>
-                    <div className="w-full lg:w-1/2">
+                    <div className="w-full lg:w-1/2 pw-col">
                         <div className="flex flex-wrap">
                             <div className="w-full mb-3">
                                 { shouldRenderComponent(
@@ -156,14 +161,14 @@ function InformationWindow() {
                                 )}
                             </div>
 
-                            <div className="w-full mt-4 border border-primary">
+                            <div className="w-full mt-4 border border-primary pw-card">
                                 { shouldRenderComponent(
                                     <Chart
                                         info={powerUsageInfo}
-                                        heading={"Recent Usage"}
+                                        heading={t('info.recentUsage')}
                                         metaData={{
-                                            xLabel: "Time",
-                                            yLabel: "Battery Percentage",
+                                            xLabel: t('info.time'),
+                                            yLabel: t('info.percentAxis'),
                                             type:'dailyLine'
                                         }}
                                     />

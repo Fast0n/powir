@@ -1,7 +1,20 @@
 import React, {useEffect, useState} from "react";
+import Icon from "./sub-components/Icon";
 import openExternalLink from './utils/openExternalLink'
 import config from './utils/config'
 import { getUpdates } from './utils/fetcher'
+
+function isNewerVersion(remote, local) {
+    const r = String(remote || '0').split('.').map(Number)
+    const l = String(local || '0').split('.').map(Number)
+    for (let i = 0; i < Math.max(r.length, l.length); i++) {
+        const diff = (r[i] || 0) - (l[i] || 0)
+        if (diff !== 0) {
+            return diff > 0
+        }
+    }
+    return false
+}
 
 function Broadcast() {
     const [broadcastData, setBroadcastData] = useState({
@@ -23,7 +36,8 @@ function Broadcast() {
         if (data.personal.status) {
             setShouldRenderPersonal(true)
         }
-        if (data.update.status && data.update.version !== config.version) {
+        // Mostra l'avviso solo se la versione remota è più recente (evita falsi avvisi nel fork)
+        if (data.update.status && isNewerVersion(data.update.version, config.version)) {
             setShouldRenderUpdate(true)
         }
     }
@@ -67,7 +81,7 @@ function Broadcast() {
                 <div className={alertClass}>
                     <div className='flex justify-between'>
                         {renderMessage(broadcast.text)}
-                        <img className='cursor-pointer image-24'
+                        <Icon className='cursor-pointer image-24'
                              onClick={closeCallback}
                              src="assets/images/delete-sign.png"
                              alt='delete-sign'

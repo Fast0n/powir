@@ -1,21 +1,23 @@
 import React from 'react';
-import { defaults }  from 'react-chartjs-2';
 import Navbar from "./components/Navbar";
 import Body from "./components/Body";
 import Footer from "./components/Footer";
 import Broadcast from "./components/Broadcast";
+import { SettingsProvider } from "./settings/SettingsContext";
 
-defaults.global.defaultFontFamily = 'Neucha'
+// I default di Chart.js (font, colori) vengono impostati da applyTheme() in base al tema scelto
 
 
 function App() {
     return (
-        <div>
-            <Broadcast />
-            <Navbar />
-            <Body />
-            <Footer />
-        </div>
+        <SettingsProvider>
+            <div className="pw-app">
+                <Broadcast />
+                <Navbar />
+                <Body />
+                <Footer />
+            </div>
+        </SettingsProvider>
     );
 }
 

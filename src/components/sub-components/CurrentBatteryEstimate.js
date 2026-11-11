@@ -1,26 +1,27 @@
 import React from "react";
+import { useSettings } from "../../settings/SettingsContext";
 
 function CurrentBatteryEstimate(props) {
-    function renderLabel(key) {
-        return key.split("(")[1].split(")")[0].toLowerCase().split(" ").map(element => {
-            return element[0].toUpperCase() + element.slice(1)
-        }).join(" ")
+    const { t } = useSettings()
+    // Le chiavi 1 e 3 sono fisse nello scraper: "ACTIVE (AT FULL CHARGE)" e "ACTIVE (AT DESIGN CAPACITY)"
+    function renderLabel(index) {
+        return index === 1 ? t('estimate.atFullCharge') : t('estimate.atDesignCapacity')
     }
     return (
-        <div className="pb-4 border-bottom">
+        <div className="pb-4 border-bottom pw-card pw-estimate">
             <div className="pb-2">
                 <h4>{props.info.data[0][0]}</h4>
                 <span className="text-xs">
-                    {props.info.note}
+                    {t('notes.' + props.info.name, props.info.note)}
                 </span>
             </div>
-            <div className="flex">
+            <div className="flex flex-wrap">
                 <div className="mr-1 flex">
-                    <h5 className="mr-1">{renderLabel(props.info.keys[1])}:</h5>
+                    <h5 className="mr-1">{renderLabel(1)}:</h5>
                     <span className="badge bg-red">{props.info.data[0][1]}</span>
                 </div>
                 <div className="flex">
-                    <h5 className="mr-1">{renderLabel(props.info.keys[3])}:</h5>
+                    <h5 className="mr-1">{renderLabel(3)}:</h5>
                     <span className="badge bg-blue">{props.info.data[0][3]}</span>
                 </div>
             </div>

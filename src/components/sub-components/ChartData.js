@@ -1,22 +1,29 @@
 import {groupBy, sortBy} from 'lodash'
 
-function createData(info, type, metaData) {
+// Opzioni di default: testi inglesi e colori originali di Powir
+const DEFAULT_OPTIONS = {
+    t: (path, fallback) => fallback,
+    palette: {primary: 'red', secondary: 'blue', ac: 'green', battery: 'orange', on: 'blue', off: 'red'}
+}
+
+function createData(info, type, metaData, options = DEFAULT_OPTIONS) {
+    const {t, palette} = {...DEFAULT_OPTIONS, ...options}
     switch (type) {
         case 'batteryCapacityHistory':
-            return createBatteryCapacityData(info)
+            return createBatteryCapacityData(info, palette)
         case 'batteryLifeHistory':
-            return createBatteryLifeHistoryData(info)
+            return createBatteryLifeHistoryData(info, palette)
         case 'powerUsageInfo':
             if (metaData.type === 'cumulativePie') {
-                return createCumulativePiePowerUsageInfoData(info)
+                return createCumulativePiePowerUsageInfoData(info, t, palette)
             }
             else if (metaData.type === 'dailyBar') {
-                return createBarPowerUsageInfoData(info)
+                return createBarPowerUsageInfoData(info, t, palette)
             }
             else if (metaData.type === 'dailyLine') {
-                return createLinePowerUsageInfoData(info)
+                return createLinePowerUsageInfoData(info, t, palette)
             }
-            return createActiveSuspendedPiePowerUsageInfoData(info)
+            return createActiveSuspendedPiePowerUsageInfoData(info, t, palette)
         default:
             return {
                 labels: [0, 1],
@@ -31,7 +38,7 @@ function createData(info, type, metaData) {
     }
 }
 
-function createBatteryCapacityData(info) {
+function createBatteryCapacityData(info, palette) {
     return info.data.reduce((data, item, index) => {
         if (index > 0) {
             if (item[1] === info.data[index-1][1]) {
@@ -46,21 +53,21 @@ function createBatteryCapacityData(info) {
         labels: [],
         datasets: [{
             label: info.keys[1],
-            backgroundColor: 'red',
-            borderColor: 'red',
+            backgroundColor: palette.primary,
+            borderColor: palette.primary,
             data: [],
             fill: false,
         }, {
             label: info.keys[2],
-            backgroundColor: 'blue',
-            borderColor: 'blue',
+            backgroundColor: palette.secondary,
+            borderColor: palette.secondary,
             data: [],
             fill: false,
         }]
     })
 }
 
-function createBatteryLifeHistoryData(info) {
+function createBatteryLifeHistoryData(info, palette) {
     function getDaysInMonth(date) {
         return new Date(date.getFullYear(), date.getMonth()+1, 0).getDate()
     }
@@ -156,14 +163,14 @@ function createBatteryLifeHistoryData(info) {
         labels: labelsDataset,
         datasets: [{
             label: info.keys[1],
-            backgroundColor: 'red',
-            borderColor: 'red',
+            backgroundColor: palette.primary,
+            borderColor: palette.primary,
             data: filteredActiveDataset,
             fill: false,
         }, {
             label: info.keys[3],
-            backgroundColor: 'blue',
-            borderColor: 'blue',
+            backgroundColor: palette.secondary,
+            borderColor: palette.secondary,
             data: filteredDesignDataset,
             fill: false,
         }]
@@ -257,14 +264,16 @@ function getDailySumGroupedPowerUsageInfoData(groupData, filterConditional, segr
     return powerUsageDataset
 }
 
-function formatPowerUsageInfoTime(minutes) {
+function formatPowerUsageInfoTime(minutes, t) {
+    const hr = t('chart.hr', 'Hr')
+    const min = t('chart.minutes', 'Minutes')
     if (minutes > 59) {
-        return Math.floor(minutes / 60) + ' Hr ' + Math.floor(minutes % 60) + ' Minutes'
+        return Math.floor(minutes / 60) + ' ' + hr + ' ' + Math.floor(minutes % 60) + ' ' + min
     }
-    return Math.floor(minutes) + ' Minutes'
+    return Math.floor(minutes) + ' ' + min
 }
 
-function createCumulativePiePowerUsageInfoData(info) {
+function createCumulativePiePowerUsageInfoData(info, t, palette) {
     let groupData = getGroupedPowerUsageInfoData(info)
     let powerUsageDataset = getDailySumGroupedPowerUsageInfoData(
         groupData,
@@ -279,19 +288,19 @@ function createCumulativePiePowerUsageInfoData(info) {
 
     return {
         labels: [
-            'AC: ' + formatPowerUsageInfoTime(cumulativePowerUsageDataset[0]),
-            'Battery: ' + formatPowerUsageInfoTime(cumulativePowerUsageDataset[1])
+            t('chart.ac', 'AC') + ': ' + formatPowerUsageInfoTime(cumulativePowerUsageDataset[0], t),
+            t('chart.battery', 'Battery') + ': ' + formatPowerUsageInfoTime(cumulativePowerUsageDataset[1], t)
         ],
         datasets: [{
-            labelString: 'AC vs Battery',
-            backgroundColor: ['green', 'orange'],
+            labelString: t('chart.acVsBattery', 'AC vs Battery'),
+            backgroundColor: [palette.ac, palette.battery],
             data: cumulativePowerUsageDataset,
             fill: false,
         }]
     }
 }
 
-function createBarPowerUsageInfoData(info) {
+function createBarPowerUsageInfoData(info, t, palette) {
     let groupData = getGroupedPowerUsageInfoData(info)
     let powerUsageDataset = getDailySumGroupedPowerUsageInfoData(
         groupData,
@@ -307,34 +316,34 @@ function createBarPowerUsageInfoData(info) {
     return {
         labels: Object.keys(groupData),
         datasets: [{
-            label: 'AC',
-            backgroundColor: 'green',
-            borderColor: 'green',
+            label: t('chart.ac', 'AC'),
+            backgroundColor: palette.ac,
+            borderColor: palette.ac,
             borderWidth: 1,
             data: powerUsageDataset.map(item => Math.round((item[0] / 60) * 10) / 10),
         },{
-            label: 'Battery',
-            backgroundColor: 'orange',
-            borderColor: 'orange',
+            label: t('chart.battery', 'Battery'),
+            backgroundColor: palette.battery,
+            borderColor: palette.battery,
             borderWidth: 1,
             data: powerUsageDataset.map(item => Math.round((item[1] / 60) * 10) / 10),
         },{
-            label: 'ON',
-            backgroundColor: 'blue',
-            borderColor: 'blue',
+            label: t('chart.on', 'ON'),
+            backgroundColor: palette.on,
+            borderColor: palette.on,
             borderWidth: 1,
             data: powerUsageActiveSuspendedDataset.map(item => Math.round((item[0] / 60) * 10) / 10),
         },{
-            label: 'OFF',
-            backgroundColor: 'red',
-            borderColor: 'red',
+            label: t('chart.off', 'OFF'),
+            backgroundColor: palette.off,
+            borderColor: palette.off,
             borderWidth: 1,
             data: powerUsageActiveSuspendedDataset.map(item => Math.round((item[1] / 60) * 10) / 10),
         }]
     }
 }
 
-function createActiveSuspendedPiePowerUsageInfoData(info) {
+function createActiveSuspendedPiePowerUsageInfoData(info, t, palette) {
     let groupData = getGroupedPowerUsageInfoData(info)
     let powerUsageActiveSuspendedDataset = getDailySumGroupedPowerUsageInfoData(
         groupData,
@@ -349,19 +358,19 @@ function createActiveSuspendedPiePowerUsageInfoData(info) {
 
     return {
         labels: [
-            'ON ' + formatPowerUsageInfoTime(cumulativePowerUsageActiveSuspendedDataset[0]),
-            'OFF ' + formatPowerUsageInfoTime(cumulativePowerUsageActiveSuspendedDataset[1])
+            t('chart.on', 'ON') + ' ' + formatPowerUsageInfoTime(cumulativePowerUsageActiveSuspendedDataset[0], t),
+            t('chart.off', 'OFF') + ' ' + formatPowerUsageInfoTime(cumulativePowerUsageActiveSuspendedDataset[1], t)
         ],
         datasets: [{
-            label: 'AC vs Battery',
-            backgroundColor: ['blue', 'red'],
+            label: t('chart.acVsBattery', 'AC vs Battery'),
+            backgroundColor: [palette.on, palette.off],
             data: cumulativePowerUsageActiveSuspendedDataset,
             fill: false,
         }]
     }
 }
 
-function createLinePowerUsageInfoData(info) {
+function createLinePowerUsageInfoData(info, t, palette) {
     let percentageDataset = info.data.reduce((data, item, index) => {
         let dateString = (date) => date.getMonth()+1 + "/" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes()
         if (index > 1) {
@@ -380,9 +389,9 @@ function createLinePowerUsageInfoData(info) {
     return {
         labels: percentageDataset.map(item => item.x),
         datasets: [{
-            label: 'Battery Percentage',
-            backgroundColor: 'red',
-            borderColor: 'red',
+            label: t('chart.batteryPercentage', 'Battery Percentage'),
+            backgroundColor: palette.primary,
+            borderColor: palette.primary,
             data: percentageDataset,
             fill: false
         }]

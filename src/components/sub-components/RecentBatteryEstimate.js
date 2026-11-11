@@ -1,7 +1,9 @@
 import React from "react";
+import { useSettings } from "../../settings/SettingsContext";
 
 
 function RecentBatteryEstimate(props) {
+    const { t } = useSettings()
     function renderValue(formattedData, type) {
         switch (type) {
             case 'MINIMUM':
@@ -22,6 +24,10 @@ function RecentBatteryEstimate(props) {
             default:
                 return 'NONE'
         }
+    }
+
+    function displayValue(value) {
+        return value === 'NONE' ? t('estimate.none') : value
     }
 
     function formatTime(value) {
@@ -55,25 +61,25 @@ function RecentBatteryEstimate(props) {
     })
 
     return (
-        <div className="pb-4 border-bottom">
+        <div className="pb-4 border-bottom pw-card pw-estimate">
             <div className="pb-2">
-                <h4>Recent Battery Life Estimate</h4>
+                <h4>{t('estimate.recentTitle')}</h4>
                 <span className="text-xs">
-                    {props.info.note}
+                    {t('notes.' + props.info.name, props.info.note)}
                 </span>
             </div>
-            <div className="flex">
+            <div className="flex flex-wrap">
                 <div className="mr-1 flex">
-                    <h5 className="mr-1">Minimum: </h5>
-                    <span className="badge bg-red">{renderValue(formattedData, 'MINIMUM')}</span>
+                    <h5 className="mr-1">{t('estimate.minimum')}: </h5>
+                    <span className="badge bg-red">{displayValue(renderValue(formattedData, 'MINIMUM'))}</span>
                 </div>
                 <div className="mr-1 flex">
-                    <h5 className="mr-1">Maximum: </h5>
-                    <span className="badge bg-blue">{renderValue(formattedData, 'MAXIMUM')}</span>
+                    <h5 className="mr-1">{t('estimate.maximum')}: </h5>
+                    <span className="badge bg-blue">{displayValue(renderValue(formattedData, 'MAXIMUM'))}</span>
                 </div>
                 <div className="flex">
-                    <h5 className="mr-1">Average: </h5>
-                    <span className="badge success">{renderValue(formattedData, 'AVERAGE')}</span>
+                    <h5 className="mr-1">{t('estimate.average')}: </h5>
+                    <span className="badge success">{displayValue(renderValue(formattedData, 'AVERAGE'))}</span>
                 </div>
             </div>
         </div>

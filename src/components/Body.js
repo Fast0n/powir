@@ -14,11 +14,11 @@ function Body() {
         sendEvent("export-PDF-report", {status: true})
     }
     return (
-        <div className="flex">
-            <div className="w-full md:w-2/12 lg:w-2/12 xl:w-1/12 hidden md:block custom-border border-right mt-2 ml-2 mr-2">
-                <Sidebar notifyContentWindow={notifyContentWindow}/>
+        <div className="flex pw-body">
+            <div className="w-full md:w-2/12 lg:w-2/12 xl:w-1/12 hidden md:block custom-border border-right mt-2 ml-2 mr-2 pw-sidebar-col">
+                <Sidebar notifyContentWindow={notifyContentWindow} currentSection={currentSection}/>
             </div>
-            <div className="w-full md:w-10/12 lg:w-10/12 xl:w-11/12">
+            <div className="w-full md:w-10/12 lg:w-10/12 xl:w-11/12 pw-content">
                 <ContentWindow index={currentSection} setInformationWindow={setInformationWindow}/>
             </div>
         </div>

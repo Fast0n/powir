@@ -4,6 +4,7 @@ const isDev  = require('electron-is-dev')
 const scraper = require('./scrape')
 const axios = require('axios');
 const logger = require('electron-log')
+const i18n = require('./i18n')
 
 
 function getBatteryReport() {
@@ -53,12 +54,12 @@ function showAuthorPage() {
 
 function exportJSONData() {
     let options = {
-        title: "Export Data: JSON format",
+        title: i18n.t('jsonDialogTitle'),
         defaultPath : __dirname + '/powir-data.json',
-        buttonLabel : "Save JSON",
+        buttonLabel : i18n.t('jsonDialogButton'),
         filters :[
             {name: 'JSON', extensions: ['json']},
-            {name: 'All Files', extensions: ['*']}
+            {name: i18n.t('allFiles'), extensions: ['*']}
         ]
     }
     dialog.showSaveDialog(null, options).then(result => {
@@ -83,12 +84,12 @@ function exportPDFReport() {
 
     let currentWindow = BrowserWindow.getAllWindows().filter(window => window.isVisible())[0]
     let options = {
-        title: "Export Report: PDF format",
+        title: i18n.t('pdfDialogTitle'),
         defaultPath : __dirname + '/powir-report.pdf',
-        buttonLabel : "Save PDF",
+        buttonLabel : i18n.t('pdfDialogButton'),
         filters :[
             {name: 'PDF', extensions: ['pdf']},
-            {name: 'All Files', extensions: ['*']}
+            {name: i18n.t('allFiles'), extensions: ['*']}
         ]
     }
     currentWindow.webContents.printToPDF(pdfSettings()).then(data => {
